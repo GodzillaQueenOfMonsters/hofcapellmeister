@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 import os
+import sys
 
 
 # send a GET-request to an url and return response as json file
@@ -28,33 +29,46 @@ def extract_track_info(jsonfile):
             track_dict = {'title': track['title'],
                           'artist': track['artist']['name']}
             track_list.append(track_dict)
-        return pl_title, track_list
+        return pl_title, pd.DataFrame(track_list)
     else:
         return
 
 
 # create result folder if not exists and save list of dicts as csv
-def save_list_of_dicts_as_csv(list_of_dicts, name_addition=''):
-    if list_of_dicts:
+def save_df_as_csv(track_df, name_addition=''):
+    if not track_df.empty:
         if not os.path.exists('playlist_data'):
             print("created directory 'playlist_data'")
             os.mkdir('playlist_data')
         try:
-            pd.DataFrame(list_of_dicts).to_csv(f'playlist_data/playlist_{name_addition}.csv', mode='x', sep=';', index=False)
-        except FileExistsError as e:
+            track_df.to_csv(f'playlist_data/playlist_{name_addition}.csv', mode='x', sep=';', index=False)
+        except FileExistsError:
             print('File already exists!')
     else:
         return
 
 
-# create url for deezer api for a specific playlist
 # playlist_id = 12738706081
-playlist_id = 10400967982
-url = f'https://api.deezer.com/playlist/{playlist_id}'
+# playlist_id = 10400967982
+with open(sys.argv[1], 'r') as input_file:
+    pl_ids = input_file.readlines()
 
-playlist_name, track_list = extract_track_info(return_json(url))
-# print(playlist_name)
-# for track in track_list:
-#     print(track)
-
-save_list_of_dicts_as_csv(track_list, name_addition=playlist_name)
+for pl_id in pl_ids:
+    pl_id = pl_id.strip()
+    # create url for deezer api for a specific playlist
+    url = f'https://api.deezer.com/playlist/{pl_id}'
+    # read playlist info
+    try:
+        playlist_name, track_info = extract_track_info(return_json(url))
+        # save results
+        try:
+            save_df_as_csv(track_info, name_addition=f'{playlist_name}_id_{pl_id}')
+        except FileExistsError:
+            print('File already exists!')
+    except KeyError as e:
+        print(f"Playlist {pl_id} could not be read: {e} does not exist.")
+    except TypeError:
+        pass
+    #
+    # except NameError as e:
+    #     print(f"{pl_id} is probably not a valid playlist id.")
