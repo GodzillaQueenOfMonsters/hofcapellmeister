@@ -48,8 +48,6 @@ def save_df_as_csv(track_df, name_addition=''):
         return
 
 
-# playlist_id = 12738706081
-# playlist_id = 10400967982
 with open(sys.argv[1], 'r') as input_file:
     pl_ids = input_file.readlines()
 
@@ -69,6 +67,3 @@ for pl_id in pl_ids:
         print(f"Playlist {pl_id} could not be read: {e} does not exist.")
     except TypeError:
         pass
-    #
-    # except NameError as e:
-    #     print(f"{pl_id} is probably not a valid playlist id.")
