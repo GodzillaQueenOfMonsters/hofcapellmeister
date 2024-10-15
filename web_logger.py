@@ -1,8 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 
+
+
 artist = 'within%20temptation'
-url = f'https://www.volume.at/?s={artist}'
+url = f'https://www.volume.at/?s={artist}&post_type=event'
 # url = 'https://www.volume.at/?s=within%20temptation'
 
 response = requests.get(url)
