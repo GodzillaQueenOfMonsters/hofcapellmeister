@@ -19,36 +19,37 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
   ```console
   python web_logger artists.txt
   ```
-- relational model in the third normal form for the database joining data from both sources: ***hcm_relational_model.jpg***
-### work in progress:
-- write DDL statements for all required tables for MariaDB (alternative: PostgreSQL)
+- relational model in the third normal form for the database joining data from both sources:\
+***hcm_relational_model.jpg***
+- DDL statements to create *hofcapellmeister* database in *MariaDB*:\
+***hcm_create_database.txt***
+- create database:
   - start xampp
   - start Apache, then MySQL
-  - start shell *from the xampp control panel*
+  - start shell from the xampp control panel
     ```console
     mysql -u root
     ```
+  - copy paste all content of ***hcm_create_database.txt***
+  
+### work in progress:
+- write all artist - track data from one playlist into one dataframe
+- allow ***api_logger.py*** to be used directly to get input for ***web_logger.py***
+- implement handling of special characters etc. in band names
 
 ### TODO web_logger.py
-- implement handling of special characters etc. in band names (here or in ***api_logger.py***)
-- use output of ***api_logger.py*** directly as input
 - review try except blocks: exception handling was partly copy-pasted from ***api_logger.py***, parts can be removed or modified
-- unittests would be great
+- write unittests
 
 ### TODO api_logger.py
-- extract ids for tracks and artists
-- implement extraction of multiple artists from one track (currently: only first artist is extracted)
-- implement handling of special characters etc. in band names
 - write docu how to use it
-- unittests would be great
+- write unittests
 
-### TODO next week
-
+### TODO ***safe_data.py***
 - join data into database: module ***safe_data.py***
 - visualize part of the data
 
 ### TODO last week
-- write unit tests
 - clean up code and project structure
 - clean up documentation
 - more beautiful visualization
