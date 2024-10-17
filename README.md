@@ -11,31 +11,40 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
   ```console
   winpty docker run -it --rm -v /${PWD}:/hcm hcm bash
   ```
-- **module api_logger.py**: extract data from playlists via **Deezer API** and save it to csv file in playlist_data
+- ***module api_logger.py***: extract data from playlists via *Deezer API* and save it to csv file in playlist_data
   ```console
   python api_logger playlist_ids.txt
   ```
-- **module web_logger.py**: get previous and future event data via **volume.at webscraping** for a given list of artists and save it to csv files in events_data
+- ***module web_logger.py***: get previous and future event data via *volume.at webscraping* for a given list of artists and save it to csv files in events_data
   ```console
   python web_logger artists.txt
   ```
+- relational model in the third normal form for the database joining data from both sources: ***hcm_relational_model.jpg***
+### work in progress:
+- write DDL statements for all required tables for MariaDB (alternative: PostgreSQL)
+  - start xampp
+  - start Apache, then MySQL
+  - start shell *from the xampp control panel*
+    ```console
+    mysql -u root
+    ```
 
 ### TODO web_logger.py
-- implement handling of special characters etc. in band names (here or in **api_logger.py**)
-- use output of **api_logger.py** directly as input
-- review try except blocks: exception handling was partly copy-pasted from **api_logger.py**, parts can be removed or modified
+- implement handling of special characters etc. in band names (here or in ***api_logger.py***)
+- use output of ***api_logger.py*** directly as input
+- review try except blocks: exception handling was partly copy-pasted from ***api_logger.py***, parts can be removed or modified
 - unittests would be great
 
 ### TODO api_logger.py
+- extract ids for tracks and artists
 - implement extraction of multiple artists from one track (currently: only first artist is extracted)
 - implement handling of special characters etc. in band names
 - write docu how to use it
 - unittests would be great
 
 ### TODO next week
-- conceptualize a relational model in the third normal form for a database joining data from both sources
-- write DDL statements for all required tables for MariaDB (alternative: PostgreSQL)
-- join data into database: module **safe_data.py**
+
+- join data into database: module ***safe_data.py***
 - visualize part of the data
 
 ### TODO last week
@@ -44,6 +53,7 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
 - clean up documentation
 - more beautiful visualization
 - implement more features:
+  - add webscraping from arena.wien homepage to complete missing details
   - if no events can be found for users favourite artists, get events for recommended/similar artists
   - get all playlists and favourite songs from a user (with user login)
   - somehow get url to buy tickets to events (even though oeticket is ungrateful and doesn't like us)
