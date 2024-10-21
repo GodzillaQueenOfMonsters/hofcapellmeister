@@ -45,11 +45,12 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
 - write docu how to use it
 - write unittests
 
-### TODO ***safe_data.py***
-- join data into database: module ***safe_data.py***
+### TODO ***save_data.py***
+- join data into database: module ***save_data.py***
 - visualize part of the data
 
 ### TODO last week
+- read ddl for creating tables from textfile
 - clean up code and project structure
 - clean up documentation
 - more beautiful visualization

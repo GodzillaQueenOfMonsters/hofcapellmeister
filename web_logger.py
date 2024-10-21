@@ -19,7 +19,7 @@ def return_soup(url):
         print(f"ConnectionError: {err}")
 
 
-def get_dumplings(soup):
+def get_event_data(soup):
     soup = soup.find_all('section', class_="collection section--grid")
     result_dict = {}
     for section in soup:
@@ -73,23 +73,23 @@ def save_df_as_csv(events_df, name_addition=''):
 #     save_df_as_csv(value, name_addition=key)
 
 
-with open(sys.argv[1], 'r') as input_file:
-    artists = input_file.readlines()
-
-for artist in artists:
-    artist = artist.strip().replace(' ', '+')
-    # create url to search for artist events at volume.at
-    a_url = f'https://www.volume.at/?s={artist}&post_type=event'
-    # read events info
-    try:
-        results = get_dumplings(return_soup(a_url))
-        # save results
-        for key, dataframe in results.items():
-            try:
-                save_df_as_csv(dataframe, name_addition=key)
-            except FileExistsError:
-                print('File already exists!')
-    except KeyError as e:
-        print(f"Playlist {artist} could not be read: {e}")
-    except TypeError:
-        pass
+# with open(sys.argv[1], 'r') as input_file:
+#     artists = input_file.readlines()
+#
+# for artist in artists:
+#     artist = artist.strip().replace(' ', '+')
+#     # create url to search for artist events at volume.at
+#     a_url = f'https://www.volume.at/?s={artist}&post_type=event'
+#     # read events info
+#     try:
+#         results = get_event_data(return_soup(a_url))
+#         # save results
+#         for key, dataframe in results.items():
+#             try:
+#                 save_df_as_csv(dataframe, name_addition=key)
+#             except FileExistsError:
+#                 print('File already exists!')
+#     except KeyError as e:
+#         print(f"Playlist {artist} could not be read: {e}")
+#     except TypeError:
+#         pass

@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import os
 import sys
-import json
+# import json
 
 
 # send a GET-request to an url and return response as json file
