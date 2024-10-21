@@ -21,7 +21,11 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
   ```
 - relational model in the third normal form for the database joining data from both sources:\
 ***hcm_relational_model.jpg***
-- DDL statements to create *hofcapellmeister* database in *MariaDB*:\
+- ***module save_data.py***: create all tables for database if they don't exist and save all data from folder ***events_data*** to the *hofcapellmeister* database
+  ```console
+  python save_data
+  ```
+- DDL statements to create *hofcapellmeister* database in *MariaDB* (for information only):\
 ***hcm_create_database.txt***
 - create database:
   - start xampp
@@ -30,12 +34,17 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
     ```console
     mysql -u root
     ```
-  - copy paste all content of ***hcm_create_database.txt***
+  - create database:
+    ```mysql
+    CREATE DATABASE hofcapellmeister;
+    USE hofcapellmeister;
+    ```
   
 ### work in progress:
 - write all artist - track data from one playlist into one dataframe
 - allow ***api_logger.py*** to be used directly to get input for ***web_logger.py***
 - implement handling of special characters etc. in band names
+- implement saving output of 
 
 ### TODO web_logger.py
 - review try except blocks: exception handling was partly copy-pasted from ***api_logger.py***, parts can be removed or modified
@@ -46,7 +55,7 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
 - write unittests
 
 ### TODO ***save_data.py***
-- join data into database: module ***save_data.py***
+- save data from playlist and track data
 - visualize part of the data
 
 ### TODO last week

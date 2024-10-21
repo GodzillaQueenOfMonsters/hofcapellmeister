@@ -13,7 +13,8 @@ class ConnectorMariaDB:
                 database=self.__db_name,
                 host=host,
                 user=user,
-                password=password
+                password=password,
+                allow_local_infile = True
             )
             # cursor = self.__connection.cursor()
         except Exception as e:
@@ -74,14 +75,13 @@ class ConnectorMariaDB:
                 FOREIGN KEY(tr_id) REFERENCES track(tr_id)
                 );
             ''')
+            # self.__connection.commit()
         except Exception as e:
             raise ec.DataBaseError(f"Error while creating tables. {type(e).__name__}: {e}")
 
     # adds event data directly via insert statements; requires list of tuples or pandas DataFrame object
-    def add_events(self, events):
-        date_format = '%d. %b %Y'
-        # self.__connection.reconnect()
-        # cursor = self.__connection.cursor()
+    def add_events(self, events, date_format):
+        # date_format = '%d. %b %Y'
         if isinstance(events, pd.DataFrame):
             events = events.to_records(index=False).tolist()
         try:
@@ -92,6 +92,26 @@ class ConnectorMariaDB:
             self.__connection.commit()
         except Exception as e:
             raise ec.DataBaseError(f"Error while adding events. {type(e).__name__}: {e}")
+
+    def add_events_from_csv(self, file_name, date_format='%d. %b %Y'):
+        try:
+            self.__connection.reconnect()
+            cursor = self.__connection.cursor()
+            # cursor.execute("show global variables like 'opt_local_infile';")
+            # return cursor.fetchall()
+            query = f'''load data local infile '{file_name}'
+            ignore into table event
+            columns terminated by ';'
+            ignore 1 lines
+            (ev_name, @ev_date, ev_location)
+            set ev_date=(SELECT STR_TO_DATE(@ev_date, '{date_format}')); '''
+            cursor.execute(query)
+            self.__connection.commit()
+            # return cursor.fetchall()
+        except Exception as e:
+            raise ec.DataBaseError(f"Error while adding events. {type(e).__name__}: {e}")
+
+
         # finally:
         #     self.close_connection()
 
