@@ -97,10 +97,10 @@ class ConnectorMariaDB:
         try:
             self.__connection.reconnect()
             cursor = self.__connection.cursor()
-            # cursor.execute("show global variables like 'opt_local_infile';")
-            # return cursor.fetchall()
+            cursor.execute("SET NAMES utf8mb4;")
             query = f'''load data local infile '{file_name}'
             ignore into table event
+            CHARACTER SET utf8mb4
             columns terminated by ';'
             ignore 1 lines
             (ev_name, @ev_date, ev_location)
@@ -111,6 +111,23 @@ class ConnectorMariaDB:
         except Exception as e:
             raise ec.DataBaseError(f"Error while adding events. {type(e).__name__}: {e}")
 
+# TODO: fix code, not working yet!
+    def add_pl_tr_from_csv(self, file_name):
+        try:
+            self.__connection.reconnect()
+            cursor = self.__connection.cursor()
+            # cursor.execute("SET NAMES utf8mb4;")
+            query = f'''load data local infile '{file_name}'
+            into table pl_tr
+            CHARACTER SET utf8mb4
+            columns terminated by ';'
+            ignore 1 lines
+            (pl_id, @dummy, tr_id, @dummy);'''
+            cursor.execute(query)
+            self.__connection.commit()
+            # return cursor.fetchall()
+        except Exception as e:
+            raise ec.DataBaseError(f"Error while adding pl_tr data. {type(e).__name__}: {e}")
 
         # finally:
         #     self.close_connection()

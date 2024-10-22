@@ -9,14 +9,19 @@ password = ''
 host = 'host.docker.internal'
 date_format = '%d. %b %Y'
 # file_n = 'C:/Users/am-user347/Documents/hofcapellmeister/events_data/events_vergangene_avenged_sevenfold.csv'
-dir_name = r'/hcm/events_data/'
+event_dir = r'/hcm/events_data/'
+pl_tr_dir = r'/hcm/pl_tr_data/'
 
 try:
     hcm_db = ConnectorMariaDB(db_name=db_path, user=user, password=password, host=host)
     # print('Database created successfully!')
-    for file_name in os.listdir(dir_name):
-        file_path = os.path.join(dir_name, file_name)
+    for file_name in os.listdir(event_dir):
+        file_path = os.path.join(event_dir, file_name)
         hcm_db.add_events_from_csv(file_path, date_format)
+    # TODO: fix code, not working yet!
+    for file_name in os.listdir(pl_tr_dir):
+        file_path = os.path.join(pl_tr_dir, file_name)
+        hcm_db.add_pl_tr_from_csv(file_path)
     # hcm_db.close_connection()
 except ec.DataBaseError as e:
     print(type(e).__name__, e)

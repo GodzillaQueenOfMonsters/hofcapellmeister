@@ -3,6 +3,7 @@ import requests
 import os
 import sys
 from bs4 import BeautifulSoup
+import re
 
 
 # send a GET-request to an url and return response as soup file
@@ -51,33 +52,23 @@ def get_event_data(soup):
 
 
 def save_df_as_csv(events_df, name_addition=''):
-    if not events_df.empty:
-        if not os.path.exists('events_data'):
-            print("created directory 'events_data'")
-            os.mkdir('events_data')
-        try:
-            events_df.to_csv(f'events_data/events_{name_addition}.csv', mode='x', sep=';', index=False)
-        except FileExistsError:
-            print('File already exists!')
-    else:
-        return
+    if not os.path.exists('events_data'):
+        print("created directory 'events_data'")
+        os.mkdir('events_data')
+    events_df.to_csv(f'events_data/events_{name_addition}.csv', mode='w', sep=';', index=False)
 
 
-# artist = 'within%20temptation'
-# artist = 'halloween'
-# artist = 'laraduna'
-# a_url = f'https://www.volume.at/?s={artist}&post_type=event'
-#
-# results = get_dumplings(return_soup(a_url))
-# for key, value in results.items():
-#     save_df_as_csv(value, name_addition=key)
+def prep_str_for_url(raw_str):
+    nasty_chars = r'[^\w\s]'
+    return re.sub(nasty_chars, '', raw_str).replace(' ', '+')
 
 
 with open(sys.argv[1], 'r') as input_file:
     artists = input_file.readlines()
 
 for artist in artists:
-    artist = artist.strip().replace(' ', '+')
+    artist = prep_str_for_url(artist.strip())
+    # print(artist)
     # create url to search for artist events at volume.at
     a_url = f'https://www.volume.at/?s={artist}&post_type=event'
     # read events info
@@ -85,10 +76,10 @@ for artist in artists:
         results = get_event_data(return_soup(a_url))
         # save results
         for key, dataframe in results.items():
-            try:
+            if not dataframe.empty:
                 save_df_as_csv(dataframe, name_addition=key)
-            except FileExistsError:
-                print('File already exists!')
+            else:
+                print(f"No events found for {key}.")
     except KeyError as e:
         print(f"Playlist {artist} could not be read: {e}")
     except TypeError:

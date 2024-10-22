@@ -11,19 +11,19 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
   ```console
   winpty docker run -it --rm -v /${PWD}:/hcm hcm bash
   ```
-- ***module api_logger.py***: extract data from playlists via *Deezer API* and save it to csv file in playlist_data
+- ***module api_logger.py***: extract data from playlists via *Deezer API* and save it to csv files in ppl_tr_data and tr_art_data, respectively
   ```console
-  python api_logger playlist_ids.txt
+  python api_logger.py playlist_ids.txt
   ```
-- ***module web_logger.py***: get previous and future event data via *volume.at webscraping* for a given list of artists and save it to csv files in events_data
+- ***module web_logger.py***: get previous and future event data via *volume.at webscraping* for a list of artists (output from ***module api_logger.py***) and save it to csv files in events_data
   ```console
-  python web_logger artists.txt
+  python web_logger.py art_names.txt
   ```
 - relational model in the third normal form for the database joining data from both sources:\
 ***hcm_relational_model.jpg***
 - ***module save_data.py***: create all tables for database if they don't exist and save all data from folder ***events_data*** to the *hofcapellmeister* database
   ```console
-  python save_data
+  python save_data.py
   ```
 - DDL statements to create *hofcapellmeister* database in *MariaDB* (for information only):\
 ***hcm_create_database.txt***
@@ -41,12 +41,11 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
     ```
   
 ### work in progress:
-- write all artist - track data from one playlist into one dataframe
-- allow ***api_logger.py*** to be used directly to get input for ***web_logger.py***
-- implement handling of special characters etc. in band names
-- implement saving output of 
+- save data from playlist and track data
 
 ### TODO web_logger.py
+- remove duplicates in list of artist names befor using it
+- check/improve handling of special characters
 - review try except blocks: exception handling was partly copy-pasted from ***api_logger.py***, parts can be removed or modified
 - write unittests
 
@@ -55,7 +54,6 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
 - write unittests
 
 ### TODO ***save_data.py***
-- save data from playlist and track data
 - visualize part of the data
 
 ### TODO last week

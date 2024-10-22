@@ -5,3 +5,4 @@ pl_tr_data
 tr_art_data
 __pycache__
 docker_database_connector
+art_names.txt
