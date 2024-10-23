@@ -2,7 +2,24 @@
 connects infos from your music streaming habits (Deezer) to concerts of your favourite artists in your area (for Vienna, www.volume.at)
 
 ## project documentation - work in progress
-### Previous steps
+### Set up database
+- relational model in the third normal form for the database joining data from both sources:\
+***hcm_relational_model.jpg***
+- DDL statements to create *hofcapellmeister* database in *MariaDB* (for information only):\
+***hcm_create_database.txt***
+- create database:
+  - start xampp
+  - start Apache, then MySQL
+  - start shell from the xampp control panel
+    ```console
+    mysql -u root
+    ```
+  - create database:
+    ```mysql
+    CREATE DATABASE hofcapellmeister;
+    USE hofcapellmeister;
+    ```
+### Set up/run program
 - set up docker environment:
   ```console
   docker build -t hcm .
@@ -19,45 +36,33 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
   ```console
   python web_logger.py art_names.txt
   ```
-- relational model in the third normal form for the database joining data from both sources:\
-***hcm_relational_model.jpg***
-- ***module save_data.py***: create all tables for database if they don't exist and save all data from folder ***events_data*** to the *hofcapellmeister* database
+- ***module save_data.py***: create all tables for database if they don't exist and save all data from folders ***events_data***, ***pl_tr_data***, ***tr_art_data*** to the *hofcapellmeister* database
   ```console
   python save_data.py
   ```
-- DDL statements to create *hofcapellmeister* database in *MariaDB* (for information only):\
-***hcm_create_database.txt***
-- create database:
-  - start xampp
-  - start Apache, then MySQL
-  - start shell from the xampp control panel
-    ```console
-    mysql -u root
-    ```
-  - create database:
-    ```mysql
-    CREATE DATABASE hofcapellmeister;
-    USE hofcapellmeister;
-    ```
-  
-### work in progress:
-- save data from playlist and track data
 
-### TODO web_logger.py
+### work in progress:
+- get data for *art_ev* table
+- implement some kind of visualization
+
+### TODO ***web_logger.py***
 - remove duplicates in list of artist names befor using it
+- add artist names to csv output
 - check/improve handling of special characters
 - review try except blocks: exception handling was partly copy-pasted from ***api_logger.py***, parts can be removed or modified
 - write unittests
 
-### TODO api_logger.py
+### TODO ***api_logger.py***
 - write docu how to use it
 - write unittests
 
 ### TODO ***save_data.py***
+- check if *create_hcm_tables* is finished before importing data
 - visualize part of the data
 
 ### TODO last week
 - read ddl for creating tables from textfile
+- read connection variables from configfile
 - clean up code and project structure
 - clean up documentation
 - more beautiful visualization
