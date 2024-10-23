@@ -34,7 +34,7 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
   ```
 - ***module web_logger.py***: get previous and future event data via *volume.at webscraping* for a list of artists (output from ***module api_logger.py***) and save it to csv files in events_data
   ```console
-  python web_logger.py art_names.txt
+  python web_logger.py
   ```
 - ***module save_data.py***: create all tables for database if they don't exist and save all data from folders ***events_data***, ***pl_tr_data***, ***tr_art_data*** to the *hofcapellmeister* database
   ```console
@@ -42,27 +42,27 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
   ```
 
 ### work in progress:
-- get data for *art_ev* table
-- implement some kind of visualization
+- implement some kind of visualization, ***plot_data.py***?
+- maybe orchestrate everything from a ***main.py*** file
 
 ### TODO ***web_logger.py***
-- remove duplicates in list of artist names befor using it
-- add artist names to csv output
 - check/improve handling of special characters
 - review try except blocks: exception handling was partly copy-pasted from ***api_logger.py***, parts can be removed or modified
 - write unittests
 
 ### TODO ***api_logger.py***
+- better exception handling in case of requests.exceptions.ConnectionError: Max retries exceeded with url
+- review try except blocks
 - write docu how to use it
 - write unittests
 
 ### TODO ***save_data.py***
 - check if *create_hcm_tables* is finished before importing data
+- read ddl for creating tables from textfile
+- read connection variables from configfile
 - visualize part of the data
 
 ### TODO last week
-- read ddl for creating tables from textfile
-- read connection variables from configfile
 - clean up code and project structure
 - clean up documentation
 - more beautiful visualization

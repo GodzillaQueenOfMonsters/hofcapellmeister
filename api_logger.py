@@ -85,6 +85,7 @@ def save_df_as_csv(info_df, table_name, name_addition=''):
 with open(sys.argv[1], 'r') as input_file:
     pl_ids = input_file.readlines()
 
+artist_df_list = []
 for pl_id in pl_ids:
     pl_id = pl_id.strip()
     # create url for deezer api for a specific playlist
@@ -121,7 +122,7 @@ for pl_id in pl_ids:
                 if not tr_art_df.empty:
                     tr_art_list.append(tr_art_df)
                 if playlist_is_long:
-                    time.sleep(0.03)
+                    time.sleep(0.05)
             except TypeError as e:
                 print(f"Json file for {tr_id} returned empty.")
             except KeyError as e:
@@ -131,7 +132,12 @@ for pl_id in pl_ids:
         tr_art_df_per_pl = pd.concat(tr_art_list, ignore_index=True)
         # print(set(tr_art_df_per_pl['art_name']))
         save_df_as_csv(tr_art_df_per_pl, table_name='tr_art', name_addition=f'{pl_id}_{pl_name}')
-        with open('art_names.txt', 'a') as write_artists:
-            for a_name in set(tr_art_df_per_pl['art_name']):
-                write_artists.write(a_name + '\n')
+
+        artist_df_list.append(tr_art_df_per_pl[['art_id', 'art_name']].drop_duplicates(ignore_index=True))
+        # with open('artists.txt', 'a') as write_artists:
+        #     for artist in tr_art_df_per_pl['art_id', 'art_name'].drop_duplicates(inplace=True, ignore_index=True):
+        #         write_artists.write(artist + '\n')
             # write_artists.writelines(set(tr_art_df_per_pl['art_name']))
+artist_df = pd.concat(artist_df_list, ignore_index=True).drop_duplicates(ignore_index=True)
+artist_df.to_csv(f'artists.csv', mode='w', sep=';', index=False)
+# print(artist_df)

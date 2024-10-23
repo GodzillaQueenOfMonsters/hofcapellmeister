@@ -58,6 +58,7 @@ class ConnectorMariaDB:
             CREATE TABLE IF NOT EXISTS art_ev (
                 art_id BIGINT,
                 ev_id BIGINT,
+                search_term VARCHAR(100) NOT NULL,
                 PRIMARY KEY(art_id, ev_id),
                 FOREIGN KEY(art_id) REFERENCES artist(art_id),
                 FOREIGN KEY(ev_id) REFERENCES event(ev_id)
@@ -99,14 +100,25 @@ class ConnectorMariaDB:
             self.__connection.reconnect()
             cursor = self.__connection.cursor()
             cursor.execute("SET NAMES utf8mb4;")
-            query = f'''load data local infile '{file_name}'
+            query_event = f'''load data local infile '{file_name}'
             ignore into table event
             CHARACTER SET utf8mb4
             columns terminated by ';'
             ignore 1 lines
-            (ev_name, @ev_date, ev_location)
+            (ev_name, @ev_date, ev_location, @search_term, @art_id)
             set ev_date=(SELECT STR_TO_DATE(@ev_date, '{date_format}')); '''
-            cursor.execute(query)
+            query_art_ev = f'''load data local infile '{file_name}'
+            ignore into table art_ev
+            CHARACTER SET utf8mb4
+            columns terminated by ';'
+            ignore 1 lines
+            (@ev_name, @ev_date, @ev_location, search_term, art_id)
+            set ev_id=(SELECT ev_id from event 
+            WHERE ev_name = @ev_name AND
+            ev_date = STR_TO_DATE(@ev_date, '{date_format}') AND
+            ev_location = @ev_location); '''
+            for query in (query_event, query_art_ev):
+                cursor.execute(query)
             self.__connection.commit()
             # return cursor.fetchall()
         except Exception as e:
@@ -165,7 +177,7 @@ class ConnectorMariaDB:
 
             for query in (query_artist, query_art_tr):
                 cursor.execute(query)
-                print(query)
+                # print(query)
             self.__connection.commit()
             # return cursor.fetchall()
         except Exception as e:

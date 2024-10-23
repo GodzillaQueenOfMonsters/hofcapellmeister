@@ -7,3 +7,4 @@ __pycache__
 docker_database_connector
 art_names.txt
 MariaDB-CSV_Import.txt
+artists.csv

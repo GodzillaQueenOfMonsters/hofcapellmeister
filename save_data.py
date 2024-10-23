@@ -28,7 +28,7 @@ try:
         hcm_db.add_pl_tr_from_csv(file_path)
     for file_name in os.listdir(tr_art_dir):
         file_path = os.path.join(tr_art_dir, file_name)
-        print(file_path)
+        # print(file_path)
         hcm_db.add_tr_art_from_csv(file_path)
 
     # hcm_db.close_connection()

@@ -63,23 +63,29 @@ def prep_str_for_url(raw_str):
     return re.sub(nasty_chars, '', raw_str).replace(' ', '+')
 
 
-with open(sys.argv[1], 'r') as input_file:
-    artists = input_file.readlines()
+# with open(sys.argv[1], 'r') as input_file:
+#     artists = input_file.readlines()
 
-for artist in artists:
-    artist = prep_str_for_url(artist.strip())
+artists = pd.read_csv('artists.csv', sep=';')
+
+for _, artist in artists.iterrows():
+    # print(row['art_id'], row['art_name'])
+    art_id = artist['art_id']
+    search_term = prep_str_for_url(artist['art_name'])
     # print(artist)
     # create url to search for artist events at volume.at
-    a_url = f'https://www.volume.at/?s={artist}&post_type=event'
+    a_url = f'https://www.volume.at/?s={search_term}&post_type=event'
     # read events info
     try:
         results = get_event_data(return_soup(a_url))
         # save results
         for key, dataframe in results.items():
             if not dataframe.empty:
+                dataframe['search_term'] = search_term
+                dataframe['art_id'] = art_id
                 save_df_as_csv(dataframe, name_addition=key)
             else:
-                print(f"No events found for {key}.")
+                print(f"No events found for: {key}")
     except KeyError as e:
         print(f"Playlist {artist} could not be read: {e}")
     except TypeError:
