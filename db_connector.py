@@ -7,9 +7,8 @@ import error_classes as ec
 
 
 class ConnectorMariaDB:
-    def __init__(self, db_name, staging_name, user, password, host):
+    def __init__(self, db_name, user, password, host):
         self.__db_name = db_name
-        self.__staging = staging_name
         try:
             self.__connection = mysql.connector.connect(
                 database=self.__db_name,
@@ -76,6 +75,23 @@ class ConnectorMariaDB:
                 PRIMARY KEY(pl_id, tr_id),
                 FOREIGN KEY(pl_id) REFERENCES playlist(pl_id),
                 FOREIGN KEY(tr_id) REFERENCES track(tr_id)
+                );
+            CREATE OR REPLACE VIEW event_all_info AS (
+                SELECT ev_name, ev_date, ev_location, search_term, art_name, art_id, pl_name
+                FROM
+                event JOIN art_ev USING (ev_id)
+                JOIN artist USING (art_id)
+                JOIN art_tr USING (art_id)
+                JOIN pl_tr USING (tr_id)
+                JOIN playlist USING (pl_id)
+                );
+            CREATE OR REPLACE VIEW artist_all_info AS (
+                SELECT art_id, art_name, tr_name, pl_name
+                FROM
+                artist JOIN art_tr USING (art_id)
+                JOIN track USING (tr_id) 
+                JOIN pl_tr USING (tr_id)
+                JOIN playlist USING (pl_id)
                 );
             ''')
             # self.__connection.commit()
@@ -186,18 +202,53 @@ class ConnectorMariaDB:
         # finally:
         #     self.close_connection()
 
-    # def get_movies_by_director(self, director):
-    #     try:
-    #         cursor = self.__connection.cursor()
-    #         cursor.execute('SELECT * FROM movies WHERE director = %s;', (director,))
-    #     except Exception as e:
-    #         raise ec.DatabaseError(
-    #             f"Error while trying to fetch movies directed by {director}. {type(e).__name__}: {e}")
-    #     columns = [desc_list[0] for desc_list in cursor.description]
-    #     return pd.DataFrame(cursor.fetchall(), columns=columns)
-    #     # finally:
-    #     #     self.close_connection()
-    #
+    def get_events(self, only_future=True):
+        if only_future:
+            query = '''WITH art_imp AS (
+                    SELECT art_id, count(tr_name) AS importance
+                    FROM artist_all_info
+                    GROUP BY art_id
+                )
+                SELECT DISTINCT * FROM
+                event_all_info JOIN art_imp USING (art_id)
+                WHERE ev_date >= NOW()
+                ORDER BY importance DESC;'''
+        else:
+            query = '''WITH art_imp AS (
+                    SELECT art_id, count(tr_name) AS importance
+                    FROM artist_all_info
+                    GROUP BY art_id
+                )
+                SELECT DISTINCT * FROM
+                event_all_info JOIN art_imp USING (art_id)
+                ORDER BY importance DESC;'''
+        try:
+            self.__connection.reconnect()
+            cursor = self.__connection.cursor()
+            cursor.execute(query)
+        except Exception as e:
+            raise ec.DataBaseError(
+                f"Error while trying to fetch event data. {type(e).__name__}: {e}")
+        columns = [desc_list[0] for desc_list in cursor.description]
+        return pd.DataFrame(cursor.fetchall(), columns=columns)
+
+    def get_artists(self, number_of_tracks=4):
+        query = f'''SELECT art_name, count(tr_name) AS number_of_tracks
+                FROM artist_all_info GROUP BY art_id 
+                HAVING number_of_tracks >= {number_of_tracks}
+                ORDER BY number_of_tracks DESC;'''
+        try:
+            self.__connection.reconnect()
+            cursor = self.__connection.cursor()
+            cursor.execute(query)
+        except Exception as e:
+            raise ec.DataBaseError(
+                f"Error while trying to fetch event data. {type(e).__name__}: {e}")
+        columns = [desc_list[0] for desc_list in cursor.description]
+        return pd.DataFrame(cursor.fetchall(), columns=columns)
+        # finally:
+        #     self.close_connection()
+
     # def delete_movie(self, movie_id):
     #     try:
     #         cursor = self.__connection.cursor()

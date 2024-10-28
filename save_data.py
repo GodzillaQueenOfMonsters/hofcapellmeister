@@ -4,7 +4,6 @@ import os
 import pandas as pd
 
 db_path = 'hofcapellmeister'
-staging_db_name = 'hcm_staging;'
 user = 'root'
 password = ''
 host = 'host.docker.internal'
@@ -15,7 +14,7 @@ pl_tr_dir = r'/hcm/pl_tr_data/'
 tr_art_dir = r'/hcm/tr_art_data/'
 
 try:
-    hcm_db = ConnectorMariaDB(db_name=db_path, staging_name=staging_db_name, user=user, password=password, host=host)
+    hcm_db = ConnectorMariaDB(db_name=db_path, user=user, password=password, host=host)
     # TODO: check if create table is finished before reading files
     # print('Database created successfully!')
     for file_name in os.listdir(event_dir):
@@ -31,7 +30,7 @@ try:
         # print(file_path)
         hcm_db.add_tr_art_from_csv(file_path)
 
-    # hcm_db.close_connection()
+    hcm_db.close_connection()
 except ec.DataBaseError as e:
     print(type(e).__name__, e)
 
