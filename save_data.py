@@ -14,10 +14,16 @@ except ec.DataBaseError as e:
 # finally:
 #     hcm_db.close_connection()
 
+
 try:
     for file_name in os.listdir(event_dir):
         file_path = os.path.join(event_dir, file_name)
         hcm_db.add_events_from_csv(file_path, date_format)
+except ec.DataBaseError as e:
+    print(type(e).__name__, e)
+except FileNotFoundError:
+    print(f"No event data added.")
+try:
     for subdir, folders, files in os.walk(pl_tr_dir):
         for file_name in files:
             file_path = os.path.join(subdir, file_name)
@@ -32,5 +38,7 @@ try:
     #     hcm_db.add_tr_art_from_csv(file_path)
 except ec.DataBaseError as e:
     print(type(e).__name__, e)
+except FileNotFoundError as e:
+    print(f"{e}; Run api_logger first!")
 finally:
     hcm_db.close_connection()

@@ -27,14 +27,30 @@ Here is one example how you can set up the database, using xampp:
   ```mysql
   EXIT;
   ```
+For Linux:
+- enter MariaDB from command shell:
+  ```console
+  mysql -u root -p
+  ```
+- to create the database, type:
+  ```mysql
+  CREATE DATABASE hofcapellmeister;
+  create user 'hcm'@'localhost' identified by 'db_connector';
+  grant all on hofcapellmeister.* to hcm@localhost;
+  ```
 ### Set up/run program
 - set up docker environment from the main folder of your *hofcapellmeister* repository:
   ```console
   docker build -t hcm .
   ```
-- run docker container in interactive mode and mount directory for development:
+- run docker container in interactive mode and mount directory for development (on Windows, via git-bash):
   ```console
   winpty docker run -it --rm -v /${PWD}:/hcm hcm bash
+  ```
+- run docker container in interactive mode and mount directory for development (on Linux):
+  ```console
+  docker run -it --rm --network="host" -v $(pwd):/hcm hcm bash
+
   ```
 - ***module api_logger.py***: extract data from playlists via *Deezer API* and save it to csv files in ppl_tr_data and tr_art_data, in subdirectories named by playlist id
   ```console
