@@ -36,15 +36,16 @@ Here is one example how you can set up the database, using xampp:
   ```console
   winpty docker run -it --rm -v /${PWD}:/hcm hcm bash
   ```
-- ***module api_logger.py***: extract data from playlists via *Deezer API* and save it to csv files in ppl_tr_data and tr_art_data, respectively
+- ***module api_logger.py***: extract data from playlists via *Deezer API* and save it to csv files in ppl_tr_data and tr_art_data, in subdirectories named by playlist id
   ```console
   python api_logger.py aram_pl.txt
   ```
-- ***module web_logger.py***: get previous and future event data via *volume.at webscraping* for a list of artists (output from ***module api_logger.py***) and save it to csv files in events_data
+- ***module web_logger.py***: get previous and future event data via *volume.at webscraping* for a list of artists (directly from database) and save it to csv files in events_data
   ```console
   python web_logger.py
   ```
-- ***module save_data.py***: create all tables for database if they don't exist and save all data from folders ***events_data***, ***pl_tr_data***, ***tr_art_data*** to the *hofcapellmeister* database
+- ***module save_data.py***: create all tables for database if they don't exist;\
+save all data from folders ***events_data***, ***pl_tr_data***, ***tr_art_data*** to the *hofcapellmeister* database
   ```console
   python save_data.py
   ```

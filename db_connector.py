@@ -110,7 +110,10 @@ class ConnectorMariaDB:
     def __dataframe_from_query(self, query, params):
         self.__connection.reconnect()
         cursor = self.__connection.cursor()
-        cursor.execute(query, params=params)
+        if params:
+            cursor.execute(query, params=params)
+        else:
+            cursor.execute(query)
         columns = [desc_list[0] for desc_list in cursor.description]
         return pd.DataFrame(cursor.fetchall(), columns=columns)
 
@@ -197,7 +200,14 @@ class ConnectorMariaDB:
         except Exception as e:
             raise ec.DataBaseError(f"Error while adding track data. {type(e).__name__}: {e}")
 
-    def get_events(self, number_of_tracks=1, only_future=True):
+    def get_artist(self):
+        query = '''SELECT * FROM artist;'''
+        try:
+            return self.__dataframe_from_query(query, params=None)
+        except Exception as e:
+            raise ec.DataBaseError(f"Error while trying to fetch artist table. {type(e).__name__}: {e}")
+
+    def get_ev_imp(self, number_of_tracks=1, only_future=True):
         if only_future:
             if_only_future = 'AND ev_date >= NOW()'
         else:
@@ -215,9 +225,9 @@ class ConnectorMariaDB:
         try:
             return self.__dataframe_from_query(query, params=(number_of_tracks,))
         except Exception as e:
-            raise ec.DataBaseError(f"Error while trying to fetch event data. {type(e).__name__}: {e}")
+            raise ec.DataBaseError(f"Error while trying to fetch event data with column importance. {type(e).__name__}: {e}")
 
-    def get_artists(self, number_of_tracks=4):
+    def get_art_imp(self, number_of_tracks=4):
         query = '''SELECT art_name, count(tr_name) AS number_of_tracks
                 FROM artist_all_info GROUP BY art_id 
                 HAVING number_of_tracks >=%s
@@ -225,7 +235,7 @@ class ConnectorMariaDB:
         try:
             return self.__dataframe_from_query(query, params=(number_of_tracks,))
         except Exception as e:
-            raise ec.DataBaseError(f"Error while trying to fetch event data. {type(e).__name__}: {e}")
+            raise ec.DataBaseError(f"Error while trying to fetch all artist info with column number of tracks. {type(e).__name__}: {e}")
 
     def close_connection(self):
         try:

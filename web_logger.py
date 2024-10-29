@@ -1,7 +1,8 @@
 import pandas as pd
 import requests
 import os
-import sys
+from db_connector import ConnectorMariaDB
+import error_classes as ec
 from bs4 import BeautifulSoup
 import re
 
@@ -63,16 +64,19 @@ def prep_str_for_url(raw_str):
     return re.sub(nasty_chars, '', raw_str).replace(' ', '+')
 
 
-# with open(sys.argv[1], 'r') as input_file:
-#     artists = input_file.readlines()
-
-artists = pd.read_csv('artists.csv', sep=';')
+artists = None
+try:
+    hcm_db = ConnectorMariaDB()
+    artists = hcm_db.get_artist()
+except ec.DataBaseError as e:
+    print(type(e).__name__, e)
+finally:
+    hcm_db.close_connection()
 
 for _, artist in artists.iterrows():
-    # print(row['art_id'], row['art_name'])
     art_id = artist['art_id']
     search_term = prep_str_for_url(artist['art_name'])
-    # print(artist)
+
     # create url to search for artist events at volume.at
     a_url = f'https://www.volume.at/?s={search_term}&post_type=event'
     # read events info
@@ -86,7 +90,5 @@ for _, artist in artists.iterrows():
                 save_df_as_csv(dataframe, name_addition=key)
             else:
                 print(f"No events found for: {key}")
-    except KeyError as e:
-        print(f"Playlist {artist} could not be read: {e}")
     except TypeError:
         pass

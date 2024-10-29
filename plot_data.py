@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 
 try:
     hcm_db = ConnectorMariaDB()
-    df_events = hcm_db.get_events()
+    df_events = hcm_db.get_ev_imp()
     print(df_events.head(20))
-    df_artists = hcm_db.get_artists(number_of_tracks=6)
+    df_artists = hcm_db.get_art_imp(number_of_tracks=6)
     print(df_artists.head(20))
 except ec.DataBaseError as e:
     print(type(e).__name__, e)
