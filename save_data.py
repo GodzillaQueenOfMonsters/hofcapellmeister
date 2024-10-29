@@ -15,8 +15,13 @@ tr_art_dir = r'/hcm/tr_art_data/'
 
 try:
     hcm_db = ConnectorMariaDB(db_name=db_path, user=user, password=password, host=host)
+except ec.DataBaseError as e:
+    print(type(e).__name__, e)
+finally:
+    hcm_db.close_connection()
     # TODO: check if create table is finished before reading files
     # print('Database created successfully!')
+try:
     for file_name in os.listdir(event_dir):
         file_path = os.path.join(event_dir, file_name)
         # print(file_path)
@@ -29,11 +34,10 @@ try:
         file_path = os.path.join(tr_art_dir, file_name)
         # print(file_path)
         hcm_db.add_tr_art_from_csv(file_path)
-
-    hcm_db.close_connection()
 except ec.DataBaseError as e:
     print(type(e).__name__, e)
-
+finally:
+    hcm_db.close_connection()
 
 # with open(sys.argv[1], 'r') as input_file:
 #     artists = input_file.readlines()

@@ -1,6 +1,5 @@
 from db_connector import ConnectorMariaDB
 import error_classes as ec
-import pandas as pd
 import matplotlib.pyplot as plt
 
 db_path = 'hofcapellmeister'
@@ -8,20 +7,18 @@ user = 'root'
 password = ''
 host = 'host.docker.internal'
 
-
 try:
     hcm_db = ConnectorMariaDB(db_name=db_path, user=user, password=password, host=host)
-
     df_events = hcm_db.get_events()
     print(df_events.head(20))
-    df_artists = hcm_db.get_artists()
+    df_artists = hcm_db.get_artists(number_of_tracks=6)
     print(df_artists.head(20))
-
-    # hcm_db.close_connection()
 except ec.DataBaseError as e:
     print(type(e).__name__, e)
+finally:
+    hcm_db.close_connection()
 
-if not df_events.empty and not df_artists.empty:
+try:
     plt.figure(figsize=(15, 4))
     plt.subplot(1, 2, 1)
     plt.hist(df_events['ev_date'], bins=40, color='hotpink')
@@ -36,7 +33,7 @@ if not df_events.empty and not df_artists.empty:
     plt.subplot(1, 2, 2)
     plt.pie(
         df_artists['number_of_tracks'],
-        labels=df_artists['art_name'].str.replace('$','\\$'),
+        labels=df_artists['art_name'].str.replace('$', '\\$'),
         # colors=['gold', 'silver', 'peru'],
         autopct='%1.2f%%',
         textprops={'fontsize': 12}
@@ -48,3 +45,5 @@ if not df_events.empty and not df_artists.empty:
     )
 
     plt.savefig('result_plots.png')
+except NameError:
+    pass

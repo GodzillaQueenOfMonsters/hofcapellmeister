@@ -1,26 +1,28 @@
 # hofcapellmeister
 connects infos from your music streaming habits (Deezer) to concerts of your favourite artists in your area (for Vienna, www.volume.at)
 
-## project documentation
+## how to use
+### info
+#### hcm_relational_model.jpg
+relational model in the third normal form for the database joining data from both sources;
+#### hcm_create_database.txt
+DDL statements to create *hofcapellmeister* database in *MariaDB* (for information only, not executed)
 ### Set up database
-- relational model in the third normal form for the database joining data from both sources:\
-***hcm_relational_model.jpg***
-- DDL statements to create *hofcapellmeister* database in *MariaDB* (for information only):\
-***hcm_create_database.txt***
+Set up a MariaDB server with your preferred method and create a database with the name *hofcapellmeister*.
+Here is one example, using xampp:
+- start xampp
+- start Apache, then MySQL
+- start shell from the xampp control panel
+  ```console
+  mysql -u root
+  ```
 - create database:
-  - start xampp
-  - start Apache, then MySQL
-  - start shell from the xampp control panel
-    ```console
-    mysql -u root
-    ```
-  - create database:
-    ```mysql
-    CREATE DATABASE hofcapellmeister;
-    USE hofcapellmeister;
-    ```
+  ```mysql
+  CREATE DATABASE hofcapellmeister;
+  USE hofcapellmeister;
+  ```
 ### Set up/run program
-- set up docker environment:
+- set up docker environment from the main folder of your *hofcapellmeister* repository:
   ```console
   docker build -t hcm .
   ```
@@ -44,34 +46,6 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
   ```console
   python plot_data.py
   ```
-
-## TODO
-### general
-- maybe orchestrate everything from a ***main.py*** file
-- last step: publish repository
-
-### web_logger.py
-- check/improve handling of special characters
-- review try except blocks: exception handling was partly copy-pasted from ***api_logger.py***, parts can be removed or modified
-- (write unittests)
-
-### api_logger.py
-- better exception handling in case of requests.exceptions.ConnectionError: Max retries exceeded with url
-- find out why only 400 lines were written in ***artists.csv***
-- review try except blocks
-- write docu how to use it
-- (write unittests)
-
-### db_connector.py
-- check if *create_hcm_tables* is finished before importing data
-- read ddl for creating tables from textfile
-- read connection variables from configfile
-
-### save_data.py
-- **write unittests**
-
-### plot_data.py
-- less artists for pie chart, show number of tracks instead of percent, useful plot for events
 
 ## ideas for further improvement
 - add webscraping from arena.wien homepage and/or others to complete missing details
