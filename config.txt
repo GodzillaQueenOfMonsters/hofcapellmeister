@@ -1,0 +1,4 @@
+DB_NAME = 'hofcapellmeister'
+DB_HOST = 'host.docker.internal'
+DB_USER = 'root'
+DB_PASSWORD = ''

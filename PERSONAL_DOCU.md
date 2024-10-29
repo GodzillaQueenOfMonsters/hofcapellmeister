@@ -15,9 +15,6 @@
 - review try except blocks
 - (write unittests)
 
-### db_connector.py
-- read connection variables from configfile
-
 ### save_data.py
 - **write unittests**
 

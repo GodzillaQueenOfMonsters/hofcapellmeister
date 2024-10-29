@@ -2,16 +2,18 @@ import mysql.connector
 import pandas as pd
 import error_classes as ec
 
+with open('config.txt', mode='r') as configfile:
+    exec(configfile.read())
+
 
 class ConnectorMariaDB:
-    def __init__(self, db_name, user, password, host):
-        self.__db_name = db_name
+    def __init__(self):
         try:
             self.__connection = mysql.connector.connect(
-                database=self.__db_name,
-                host=host,
-                user=user,
-                password=password,
+                database=DB_NAME,
+                host=DB_HOST,
+                user=DB_USER,
+                password=DB_PASSWORD,
                 allow_local_infile=True
             )
         except Exception as e:

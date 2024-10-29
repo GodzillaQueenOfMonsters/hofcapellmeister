@@ -2,13 +2,8 @@ from db_connector import ConnectorMariaDB
 import error_classes as ec
 import matplotlib.pyplot as plt
 
-db_path = 'hofcapellmeister'
-user = 'root'
-password = ''
-host = 'host.docker.internal'
-
 try:
-    hcm_db = ConnectorMariaDB(db_name=db_path, user=user, password=password, host=host)
+    hcm_db = ConnectorMariaDB()
     df_events = hcm_db.get_events()
     print(df_events.head(20))
     df_artists = hcm_db.get_artists(number_of_tracks=6)

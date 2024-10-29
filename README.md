@@ -5,21 +5,27 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
 ### info
 #### hcm_relational_model.jpg
 relational model in the third normal form for the database joining data from both sources;
-#### hcm_create_database.txt
-DDL statements to create *hofcapellmeister* database in *MariaDB* (for information only, not executed)
+
 ### Set up database
-Set up a MariaDB server with your preferred method and create a database with the name *hofcapellmeister*.
-Here is one example, using xampp:
-- start xampp
-- start Apache, then MySQL
-- start shell from the xampp control panel
+Set up a MariaDB server with your preferred method and create a database.\
+Per default, the database is running locally, database name is *hofcapellmeister*, user is *root* with no password.\
+Default values can be changed in the ***config.txt*** file.
+
+Here is one example how you can set up the database, using xampp:
+- run xampp
+- from the xampp control panel, start Apache, then MySQL
+- start a shell from the xampp control panel, then type:
   ```console
   mysql -u root
   ```
-- create database:
+- to create the database, type:
   ```mysql
   CREATE DATABASE hofcapellmeister;
   USE hofcapellmeister;
+  ```
+- to quit (**after** *hofcapellmeister* is finished - it needs a running MariaDB server to work!), type:
+  ```mysql
+  EXIT;
   ```
 ### Set up/run program
 - set up docker environment from the main folder of your *hofcapellmeister* repository:
