@@ -2,7 +2,7 @@ from db_connector import ConnectorMariaDB
 import error_classes as ec
 import matplotlib.pyplot as plt
 
-num_of_tracks_events = 3
+num_of_tracks_events = 1
 num_of_tracks_artists = 6
 try:
     hcm_db = ConnectorMariaDB()
@@ -16,8 +16,8 @@ finally:
     hcm_db.close_connection()
 
 try:
-    plt.figure(figsize=(15, 4))
-    plt.subplot(1, 2, 1)
+    plt.figure(figsize=(10, 7))
+    plt.subplot(2, 1, 1)
     for artist in set(df_events['art_name']):
         filt_ev = df_events[df_events['art_name'] == artist]
         plt.bar(filt_ev['ev_date'], filt_ev['importance'], label=artist)
@@ -32,7 +32,7 @@ try:
         pad=15
     )
 
-    plt.subplot(1, 2, 2)
+    plt.subplot(2, 1, 2)
     pie_values = df_artists['number_of_tracks']
     plt.pie(
         pie_values,

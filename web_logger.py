@@ -45,14 +45,12 @@ def get_event_data(soup):
             dates.append(event_date.text.strip())
 
         # print()
-        df = pd.DataFrame({'event_name': names,
-                           'date': dates,
-                           'location': locations})
+        df = pd.DataFrame({'event_name': names, 'date': dates, 'location': locations})
         result_dict[res_key] = df
     return result_dict
 
 
-def save_df_as_csv(events_df, name_addition=''):
+def save_df_to_csv(events_df, name_addition=''):
     if not os.path.exists('events_data'):
         print("created directory 'events_data'")
         os.mkdir('events_data')
@@ -64,14 +62,23 @@ def prep_str_for_url(raw_str):
     return re.sub(nasty_chars, '', raw_str).replace(' ', '+')
 
 
+def is_valid_return(return_string, query_term):
+    query_term = query_term.replace('+', ' ')
+    regex_search_term_standalone = r'(\b' + re.escape(query_term) + r'\b)'
+    is_invalid = re.search(regex_search_term_standalone, return_string, re.IGNORECASE)
+    if is_invalid:
+        return False
+    else:
+        return True
+
+
 artists = None
 try:
     hcm_db = ConnectorMariaDB()
     artists = hcm_db.get_artist()
+    hcm_db.close_connection()
 except ec.DataBaseError as e:
     print(type(e).__name__, e)
-finally:
-    hcm_db.close_connection()
 
 for _, artist in artists.iterrows():
     art_id = artist['art_id']
@@ -82,12 +89,26 @@ for _, artist in artists.iterrows():
     # read events info
     try:
         results = get_event_data(return_soup(a_url))
-        # save results
+
+        # filter results/sanity check, then save data to csv
         for key, dataframe in results.items():
             if not dataframe.empty:
-                dataframe['search_term'] = search_term
-                dataframe['art_id'] = art_id
-                save_df_as_csv(dataframe, name_addition=key)
+                # create a column checking whether the event_name contains the search term as a standalone word
+                isvalid_column = dataframe.apply(lambda x: is_valid_return(x['event_name'], search_term), axis=1)
+
+                # drop all rows which likely not contain a result that is actually referring to a concert of the band
+                valid_dataframe = dataframe.drop(dataframe[isvalid_column].index)
+
+                if not valid_dataframe.empty:
+                    # add columns with the search term the query was using and the corresponding artist_id
+                    valid_dataframe['search_term'] = search_term
+                    valid_dataframe['art_id'] = art_id
+
+                    # save data to csv
+                    save_df_to_csv(valid_dataframe, name_addition=key)
+
+                else:
+                    print(f"No valid events found for: {key}")
             else:
                 print(f"No events found for: {key}")
     except TypeError:

@@ -30,7 +30,7 @@ Here is one example how you can set up the database, using xampp:
 For Linux:
 - enter MariaDB from command shell:
   ```console
-  mysql -u root -p
+  mysql -u root -p -S /var/run/mysqld/mysqld.sock
   ```
 - to create the database, type:
   ```mysql
