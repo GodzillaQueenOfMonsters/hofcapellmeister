@@ -27,12 +27,12 @@ Here is one example how you can set up the database, using xampp:
   ```mysql
   EXIT;
   ```
-For Linux:
+If user root has a password, and you don't want to put this password into the cnf file, you can create a user just for access to this database, for example:
 - enter MariaDB from command shell:
   ```console
-  mysql -u root -p -S /var/run/mysqld/mysqld.sock
+  mysql -u root -p
   ```
-- to create the database, type:
+- in the MariaDB terminal, type:
   ```mysql
   CREATE DATABASE hofcapellmeister;
   create user 'hcm'@'localhost' identified by 'db_connector';
@@ -49,7 +49,7 @@ For Linux:
   ```
 - run docker container in interactive mode and mount directory for development (on Linux):
   ```console
-  docker run -it --rm --network="host" -v $(pwd):/hcm hcm bash
+  docker run -it --rm --network="host" -v /${PWD}:/hcm hcm bash
 
   ```
 - ***module api_logger.py***: extract data from playlists via *Deezer API* and save it to csv files in ppl_tr_data and tr_art_data, in subdirectories named by playlist id

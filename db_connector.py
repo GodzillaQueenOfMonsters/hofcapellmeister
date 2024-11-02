@@ -2,7 +2,7 @@ import mysql.connector
 import pandas as pd
 import error_classes as ec
 
-with open('config.txt', mode='r') as configfile:
+with open('hcm.cnf', mode='r') as configfile:
     exec(configfile.read())
 
 
