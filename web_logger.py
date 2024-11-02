@@ -80,36 +80,45 @@ try:
 except ec.DataBaseError as e:
     print(type(e).__name__, e)
 
-for _, artist in artists.iterrows():
-    art_id = artist['art_id']
-    search_term = prep_str_for_url(artist['art_name'])
+try:
+    if artists.empty:
+        print("No artist data received from database!")
+except AttributeError:
+    pass
 
-    # create url to search for artist events at volume.at
-    a_url = f'https://www.volume.at/?s={search_term}&post_type=event'
-    # read events info
-    try:
-        results = get_event_data(return_soup(a_url))
+try:
+    for _, artist in artists.iterrows():
+        art_id = artist['art_id']
+        search_term = prep_str_for_url(artist['art_name'])
 
-        # filter results/sanity check, then save data to csv
-        for key, dataframe in results.items():
-            if not dataframe.empty:
-                # create a column checking whether the event_name contains the search term as a standalone word
-                isvalid_column = dataframe.apply(lambda x: is_valid_return(x['event_name'], search_term), axis=1)
+        # create url to search for artist events at volume.at
+        a_url = f'https://www.volume.at/?s={search_term}&post_type=event'
+        # read events info
+        try:
+            results = get_event_data(return_soup(a_url))
 
-                # drop all rows which likely not contain a result that is actually referring to a concert of the band
-                valid_dataframe = dataframe.drop(dataframe[isvalid_column].index)
+            # filter results/sanity check, then save data to csv
+            for key, dataframe in results.items():
+                if not dataframe.empty:
+                    # create a column checking whether the event_name contains the search term as a standalone word
+                    isvalid_column = dataframe.apply(lambda x: is_valid_return(x['event_name'], search_term), axis=1)
 
-                if not valid_dataframe.empty:
-                    # add columns with the search term the query was using and the corresponding artist_id
-                    valid_dataframe['search_term'] = search_term
-                    valid_dataframe['art_id'] = art_id
+                    # drop all rows which likely not contain a result that is actually referring to a concert of the band
+                    valid_dataframe = dataframe.drop(dataframe[isvalid_column].index)
 
-                    # save data to csv
-                    save_df_to_csv(valid_dataframe, name_addition=key)
+                    if not valid_dataframe.empty:
+                        # add columns with the search term the query was using and the corresponding artist_id
+                        valid_dataframe['search_term'] = search_term
+                        valid_dataframe['art_id'] = art_id
 
+                        # save data to csv
+                        save_df_to_csv(valid_dataframe, name_addition=key)
+
+                    else:
+                        print(f"No valid events found for: {key}")
                 else:
-                    print(f"No valid events found for: {key}")
-            else:
-                print(f"No events found for: {key}")
-    except TypeError:
-        pass
+                    print(f"No events found for: {key}")
+        except TypeError:
+            pass
+except AttributeError:
+    pass

@@ -2,8 +2,8 @@ from db_connector import ConnectorMariaDB
 import error_classes as ec
 import matplotlib.pyplot as plt
 
-num_of_tracks_events = 1
-num_of_tracks_artists = 6
+num_of_tracks_events = 2
+num_of_tracks_artists = 10
 try:
     hcm_db = ConnectorMariaDB()
     df_events = hcm_db.get_ev_imp(number_of_tracks=num_of_tracks_events)

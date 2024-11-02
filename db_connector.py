@@ -1,5 +1,7 @@
 import mysql.connector
 import pandas as pd
+
+
 import error_classes as ec
 
 with open('hcm.cnf', mode='r') as configfile:
@@ -8,9 +10,10 @@ with open('hcm.cnf', mode='r') as configfile:
 
 class ConnectorMariaDB:
     def __init__(self):
+        self.__dbname = DB_NAME
         try:
             self.__connection = mysql.connector.connect(
-                database=DB_NAME,
+                database=self.__dbname,
                 host=DB_HOST,
                 user=DB_USER,
                 password=DB_PASSWORD,
@@ -237,8 +240,22 @@ class ConnectorMariaDB:
         except Exception as e:
             raise ec.DataBaseError(f"Error while trying to fetch all artist info with column number of tracks. {type(e).__name__}: {e}")
 
+    def delete_database(self):
+        query_drop = f'DROP DATABASE {self.__dbname}'
+        query_create = f'CREATE DATABASE {self.__dbname}'
+        try:
+            self.__connection.reconnect()
+            cursor = self.__connection.cursor()
+            for query in (query_drop, query_create):
+                cursor.execute(query)
+        except Exception as e:
+            raise ec.DataBaseError(f"Error while deleting and recreating database {self.__dbname}. {type(e).__name__}: {e}")
+
     def close_connection(self):
         try:
             self.__connection.close()
         except Exception as e:
             raise ec.DataBaseError(f"Error while closing connection. {type(e).__name__}: {e}")
+
+# hcm_db = ConnectorMariaDB()
+# hcm_db.delete_database()

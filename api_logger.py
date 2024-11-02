@@ -5,14 +5,14 @@ import sys
 import shutil
 import time
 from tqdm import tqdm
-import json
+# import json
 
 
 # send a GET-request to an url and return response as json file
 def return_json(url):
     # checks whether request was successful (Statuscode 200).
     try:
-        response = requests.get(url)  # , params=param)
+        response = requests.get(url)
         if response.status_code == 200:
             json_file = response.json()
             return json_file
@@ -23,7 +23,7 @@ def return_json(url):
 
 
 # extract track info from playlist json file
-def extract_tr_info(jsonfile, pl_id, pl_name):
+def extract_tr_info(jsonfile, p_id, pl_name):
     try:
         new_url = jsonfile['next']
     except KeyError:
@@ -32,7 +32,7 @@ def extract_tr_info(jsonfile, pl_id, pl_name):
     tr_list = []
     for track in pl_tracks:
         tr_dict = {
-            'pl_id': pl_id,
+            'pl_id': p_id,
             'pl_name': pl_name,
             'tr_id': track['id'],
             'tr_name': track['title']
@@ -59,16 +59,6 @@ def extract_art_info(jsonfile):
             art_list.append(art_dict)
     except KeyError as e:
         raise KeyError(e)
-        # try:
-        #     art_dict = {
-        #         'tr_id': jsonfile['id'],
-        #         'tr_name': jsonfile['title'],
-        #         'art_id': jsonfile['artist']['id'],
-        #         'art_name': jsonfile['artist']['name']
-        #     }
-        #     art_list.append(art_dict)
-        # except KeyError as e:
-        #     raise KeyError(e)
     return pd.DataFrame(art_list)
 
 
@@ -92,18 +82,24 @@ def save_df_as_csv(info_df, file_path, name_addition=''):
 
 
 def playlist_recursion(pl_url, pl_id, pl_name):
-    # read playlist info
     new_url = None
     try:
+        ## for debugging/new features:
         # pl_info = return_json(pl_url)
         # with open(f'{pl_id}.json', mode='w') as pl_json:
         #     pl_json.write(json.dumps(pl_info,
         #     indent=4))
+
+        # read playlist info
         new_url, name_add, pl_tr_df = extract_tr_info(return_json(pl_url), pl_id, pl_name)
+
         # save track ids and track names with playlist id and playlist name
         save_df_as_csv(pl_tr_df, file_path=f'pl_tr_data/{pl_id}/{pl_id}_{pl_name}', name_addition=name_add)
+
         # create url for deezer api for each track on playlist
         tr_art_list = []
+
+        # ad sleep for each recursion in order to not exceed the limit of the API (max 50 requests per 5s)
         time.sleep(0.5)
         for _, tr_id in tqdm(pl_tr_df['tr_id'].items()):
             try:
@@ -120,30 +116,30 @@ def playlist_recursion(pl_url, pl_id, pl_name):
         tr_art_df_per_pl_chunk = pd.concat(tr_art_list, ignore_index=True)
         save_df_as_csv(tr_art_df_per_pl_chunk, file_path=f'tr_art_data/{pl_id}/{pl_id}_{pl_name}', name_addition=name_add)
 
-        # artist_df_list.append(tr_art_df_per_pl[['art_id', 'art_name']].drop_duplicates(ignore_index=True))
     except KeyError as e:
         print(f"Playlist {pl_url} could not be read: {e} does not exist.")
     if new_url:
-        return playlist_recursion(new_url, pl_id, pl_name)
+        try:
+            return playlist_recursion(new_url, pl_id, pl_name)
+        except Exception as e:
+            print(e)
     else:
         return
 
 
 with open(sys.argv[1], 'r') as input_file:
-    pl_ids = input_file.readlines()
+    p_ids = input_file.readlines()
 
-# artist_df_list = []
-for pl_id in pl_ids:
-    pl_id = pl_id.strip()
-    create_overwrite_dir('pl_tr', pl_id)
-    create_overwrite_dir('tr_art', pl_id)
+
+for pid in p_ids:
+    pid = pid.strip()
+    create_overwrite_dir('pl_tr', pid)
+    create_overwrite_dir('tr_art', pid)
+
     # create url for deezer api for a specific playlist
-    name_url = f'https://api.deezer.com/playlist/{pl_id}'
-    pl_url = f'https://api.deezer.com/playlist/{pl_id}/tracks'
-    # read playlist info
-    pl_name = return_json(name_url)['title']
-    playlist_recursion(pl_url, pl_id, pl_name)
+    n_url = f'https://api.deezer.com/playlist/{pid}'
+    purl = f'https://api.deezer.com/playlist/{pid}/tracks'
 
-# artist_df = pd.concat(artist_df_list, ignore_index=True).drop_duplicates(ignore_index=True)
-# artist_df.to_csv(f'artists.csv', mode='w', sep=';', index=False)
-# print(artist_df)
+    # read playlist info
+    pname = return_json(n_url)['title']
+    playlist_recursion(purl, pid, pname)
