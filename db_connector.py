@@ -257,5 +257,7 @@ class ConnectorMariaDB:
         except Exception as e:
             raise ec.DataBaseError(f"Error while closing connection. {type(e).__name__}: {e}")
 
+
+## to delete all data from the database:
 # hcm_db = ConnectorMariaDB()
 # hcm_db.delete_database()

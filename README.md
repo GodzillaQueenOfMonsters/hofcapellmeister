@@ -8,8 +8,8 @@ relational model in the third normal form for the database joining data from bot
 
 ### Set up database
 Set up a MariaDB server with your preferred method and create a database.\
-Per default, the database is running locally, database name is *hofcapellmeister*, user is *root* with no password.\
-Default values can be changed in the ***config.txt*** file.
+Per default, the database is running locally, database name is *hofcapellmeister*, user is *hcm* with password *db_connector*.\
+Default values can be changed in the ***hcm.cnf*** file.
 
 Here is one example how you can set up the database, using xampp:
 - run xampp
@@ -69,6 +69,12 @@ save all data from folders ***events_data***, ***pl_tr_data***, ***tr_art_data**
   ```console
   python plot_data.py
   ```
+- ***module db_connector.py***: contains a class with all methods for connecting to the database;\
+Normally, it is not called directly, but if you want to delete all data from your database, there are two lines at the end of the file you can uncomment and run db_connector directly.
+  ```console
+  python db_connector.py
+  ```
+Remember to comment out these two lines again before you use ***save_data.py***, or else you will delete what you previously saved!
 
 ## ideas for further improvement
 - add webscraping from arena.wien homepage and/or others to complete missing details
