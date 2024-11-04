@@ -1,7 +1,6 @@
 import mysql.connector
 import pandas as pd
 
-
 import error_classes as ec
 
 with open('hcm.cnf', mode='r') as configfile:
@@ -228,7 +227,8 @@ class ConnectorMariaDB:
         try:
             return self.__dataframe_from_query(query, params=(number_of_tracks,))
         except Exception as e:
-            raise ec.DataBaseError(f"Error while trying to fetch event data with column importance. {type(e).__name__}: {e}")
+            raise ec.DataBaseError(
+                f"Error while trying to fetch event data with column importance. {type(e).__name__}: {e}")
 
     def get_art_imp(self, number_of_tracks=4):
         query = '''SELECT art_name, count(tr_name) AS number_of_tracks
@@ -238,7 +238,8 @@ class ConnectorMariaDB:
         try:
             return self.__dataframe_from_query(query, params=(number_of_tracks,))
         except Exception as e:
-            raise ec.DataBaseError(f"Error while trying to fetch all artist info with column number of tracks. {type(e).__name__}: {e}")
+            raise ec.DataBaseError(
+                f"Error while trying to fetch all artist info with column number of tracks. {type(e).__name__}: {e}")
 
     def delete_database(self):
         query_drop = f'DROP DATABASE {self.__dbname}'
@@ -249,14 +250,14 @@ class ConnectorMariaDB:
             for query in (query_drop, query_create):
                 cursor.execute(query)
         except Exception as e:
-            raise ec.DataBaseError(f"Error while deleting and recreating database {self.__dbname}. {type(e).__name__}: {e}")
+            raise ec.DataBaseError(
+                f"Error while deleting and recreating database {self.__dbname}. {type(e).__name__}: {e}")
 
     def close_connection(self):
         try:
             self.__connection.close()
         except Exception as e:
             raise ec.DataBaseError(f"Error while closing connection. {type(e).__name__}: {e}")
-
 
 ## to delete all data from the database:
 # hcm_db = ConnectorMariaDB()

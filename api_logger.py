@@ -5,6 +5,8 @@ import sys
 import shutil
 import time
 from tqdm import tqdm
+
+
 # import json
 
 
@@ -81,6 +83,7 @@ def save_df_as_csv(info_df, file_path, name_addition=''):
     info_df.to_csv(file_path, mode='w', sep=';', index=False)
 
 
+# get playlist data recursively - because the api only returns a json with 25 songs at a time, containing the url to the next 25 songs
 def playlist_recursion(pl_url, pl_id, pl_name):
     new_url = None
     try:
@@ -101,6 +104,7 @@ def playlist_recursion(pl_url, pl_id, pl_name):
 
         # ad sleep for each recursion in order to not exceed the limit of the API (max 50 requests per 5s)
         time.sleep(0.5)
+        # use tqdm to show iterations per time
         for _, tr_id in tqdm(pl_tr_df['tr_id'].items()):
             try:
                 tr_url = f'https://api.deezer.com/track/{tr_id}'
@@ -114,7 +118,8 @@ def playlist_recursion(pl_url, pl_id, pl_name):
 
         # save track ids and track names with playlist id and playlist name
         tr_art_df_per_pl_chunk = pd.concat(tr_art_list, ignore_index=True)
-        save_df_as_csv(tr_art_df_per_pl_chunk, file_path=f'tr_art_data/{pl_id}/{pl_id}_{pl_name}', name_addition=name_add)
+        save_df_as_csv(tr_art_df_per_pl_chunk, file_path=f'tr_art_data/{pl_id}/{pl_id}_{pl_name}',
+                       name_addition=name_add)
 
     except KeyError as e:
         print(f"Playlist {pl_url} could not be read: {e} does not exist.")
@@ -129,7 +134,6 @@ def playlist_recursion(pl_url, pl_id, pl_name):
 
 with open(sys.argv[1], 'r') as input_file:
     p_ids = input_file.readlines()
-
 
 for pid in p_ids:
     pid = pid.strip()
