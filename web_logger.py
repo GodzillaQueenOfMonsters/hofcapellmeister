@@ -19,6 +19,8 @@ def return_soup(url):
             raise ConnectionError('A problem with the url occurred.')
     except ConnectionError as err:
         print(f"ConnectionError: {err}")
+    except Exception as err:
+        print(f"Error occurred when connecting to the url {url}: {type(err).__name__} {err}")
 
 
 def get_event_data(soup):

@@ -2,15 +2,15 @@
 DB_NAME = 'hofcapellmeister'
 
 ## config for database on linux;
-DB_HOST = '127.0.0.1'
+# DB_HOST = '127.0.0.1'
 
 ## config for database on Windows;
-# DB_HOST = 'host.docker.internal'
+DB_HOST = 'host.docker.internal'
 
 ## root user on MariaDB has no password
-# DB_USER = 'root'
-# DB_PASSWORD = ''
+DB_USER = 'root'
+DB_PASSWORD = ''
 
 ## separate user for using the database created
-DB_USER = 'hcm'
-DB_PASSWORD = 'db_connector'
+# DB_USER = 'hcm'
+# DB_PASSWORD = 'db_connector'
