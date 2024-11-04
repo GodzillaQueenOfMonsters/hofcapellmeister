@@ -3,8 +3,8 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
 
 ## how to use
 ### info
-#### hcm_relational_model.jpg
-relational model in the third normal form for the database joining data from both sources;
+#### database structure:
+![relational model in the third normal form for the database joining data from both sources](./hcm_relational_model.jpg)
 
 ### Set up database
 Set up a MariaDB server with your preferred method and create a database.\
@@ -39,13 +39,14 @@ If user root has a password, and you don't want to put this password into the cn
   grant all on hofcapellmeister.* to hcm@localhost;
   ```
 ### Set up/run program
-- set up docker environment from the main folder of your *hofcapellmeister* repository:
+- set up docker environment from the main folder of your *hofcapellmeister* repository (after ensuring that Docker is running):
   ```console
   docker build -t hcm .
   ```
-- run docker container in interactive mode and mount directory for development (on Windows, via git-bash):
+- run docker container in interactive mode and mount directory for development (on Windows):\
+*NOTE*: You might run into issues if you have any spaces in the path of your working directory. This is a known issue with Docker. Furthermore, the syntax for mounting your working directory might vary slightly, depending on the operating system and/or console you are working from.
   ```console
-  winpty docker run -it --rm -v /${PWD}:/hcm hcm bash
+  docker run -it --rm -v ${PWD}:/hcm hcm bash
   ```
 - run docker container in interactive mode and mount directory for development (on Linux):
   ```console
@@ -53,7 +54,7 @@ If user root has a password, and you don't want to put this password into the cn
 
   ```
 - ***module api_logger.py***: extract data from playlists via *Deezer API* and save it to csv files in ppl_tr_data and tr_art_data, in subdirectories named by playlist id;\
-The playlist IDs from Deezer must be provided via a textfile in the same folder as ***api_logger.py***.
+The playlist IDs from Deezer must be provided via a textfile in the same folder as ***api_logger.py***, containing one ID per line.
   ```console
   python api_logger.py <textfile_with_playlist_ids>
   ```
