@@ -1,4 +1,4 @@
-## config for database on linux;
+## config for database;
 DB_NAME = 'hofcapellmeister'
 
 ## config for database on linux;
