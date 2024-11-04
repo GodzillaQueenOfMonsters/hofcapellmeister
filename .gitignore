@@ -4,11 +4,5 @@ events_data
 pl_tr_data
 tr_art_data
 __pycache__
-docker_database_connector
-art_names.txt
-MariaDB-CSV_Import.txt
-artists.csv
-aram_pl.txt
 result_plots.png
-hcm_create_database.txt
 various_stuff_not_uploaded
