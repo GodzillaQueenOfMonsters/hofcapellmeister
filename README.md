@@ -52,25 +52,25 @@ If user root has a password, and you don't want to put this password into the cn
   docker run -it --rm --network="host" -v /${PWD}:/hcm hcm bash
 
   ```
-- ***module api_logger.py***: extract data from playlists via *Deezer API* and save it to csv files in ppl_tr_data and tr_art_data, in subdirectories named by playlist id;
+- ***module api_logger.py***: extract data from playlists via *Deezer API* and save it to csv files in ppl_tr_data and tr_art_data, in subdirectories named by playlist id;\
 The playlist IDs from Deezer must be provided via a textfile in the same folder as ***api_logger.py***.
   ```console
   python api_logger.py <textfile_with_playlist_ids>
   ```
-- ***module web_logger.py***: get previous and future event data via *volume.at webscraping* for a list of artists (directly from database) and save it to csv files in events_data;
+- ***module web_logger.py***: get previous and future event data via *volume.at webscraping* for a list of artists (directly from database) and save it to csv files in events_data;\
 *CAUTION*: Web_logger uses the artist info directly from the database. Therefore, you have to run ***api_logger.py*** AND ***save_data.py*** before you can use ***web_logger.py***!
   ```console
   python web_logger.py
   ```
 - ***module save_data.py***: create all tables for database if they don't exist;\
-save all data from folders ***events_data***, ***pl_tr_data***, ***tr_art_data*** to the *hofcapellmeister* database;
+save all data from folders ***events_data***, ***pl_tr_data***, ***tr_art_data*** to the *hofcapellmeister* database;\
 *NOTE*: You can (and should) run ***save_data.py*** multiple times: Once after ***api_logger.py*** has run, and again after ***web_logger.py*** also finished.
   ```console
   python save_data.py
   ```
-- ***module plot_data.py***: get data for future events and for artists and plot an overview in ***result_plots.png***
+- ***module plot_data.py***: get data for future events and for artists and plot an overview in ***result_plots.png***\
 *NOTE*: The data are filtered by number of tracks (how many tracks from this artist are found in the database, assuming that the more tracks of this artist are in your playlist, the more important this artist is to you) to provide a reasonable output with readable plots.
-Currently, the filter is set to at least 2 tracks for future events and 10 tracks for the overview of your favorite artists directly in the python script, which works fine for the sample playlist used for development. You will probably have to change these parameters to get reasonable output.
+Currently, the filter is set to at least 1 tracks for future events and 1 tracks for the overview of your favorite artists directly in the python script, which works fine for the sample playlist used for development. You will probably have to change these parameters to get reasonable output.
   ```console
   python plot_data.py
   ```
