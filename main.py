@@ -12,7 +12,7 @@ tr_art_dir = r'/hcm/tr_art_data/'
 
 # set variables for plotting data
 num_of_tracks_events = 1
-num_of_tracks_artists = 1
+num_of_tracks_artists = 10
 
 # read playlist ids from textfile provided with program call
 with open(sys.argv[1], 'r') as input_file:
