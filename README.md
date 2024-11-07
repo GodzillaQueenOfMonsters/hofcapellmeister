@@ -4,7 +4,8 @@ connects infos from your music streaming habits (Deezer) to concerts of your fav
 ## how to use
 ### info
 #### database structure:
-![relational model in the third normal form for the database joining data from both sources](./hcm_relational_model.jpg)
+<!-- ![relational model in the third normal form for the database joining data from both sources](./hcm_relational_model.jpg) -->
+<img src="./hcm_relational_model.jpg" alt="relational model in the third normal form for the database joining data from both sources" width="60%">
 
 ### Set up database
 Set up a MariaDB server with your preferred method and create a database.\
